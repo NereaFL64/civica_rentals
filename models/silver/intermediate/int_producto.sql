@@ -1,0 +1,56 @@
+WITH productos AS (
+
+    SELECT *
+    FROM {{ ref('stg_productos') }}
+
+),
+
+categorias AS (
+
+    SELECT *
+    FROM {{ ref('int_categoria') }}
+
+),
+
+usuarios AS (
+
+    SELECT id_usuario
+    FROM {{ ref('int_usuario') }}
+
+),
+
+joined AS (
+
+    SELECT
+          p.id_producto
+        , p.nombre_producto AS nombre
+        , p.descripcion
+        , p.precio_dia
+        , p.id_usuario_propietario AS id_usuario
+        , c.id_categoria
+        , p.estado_producto
+    FROM productos p
+
+    INNER JOIN usuarios u
+        ON p.id_usuario_propietario = u.id_usuario
+
+    LEFT JOIN categorias c
+        ON p.categoria = c.nombre
+
+    WHERE p.id_producto IS NOT NULL
+
+),
+
+final AS (
+
+    SELECT *
+    FROM joined
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY id_producto
+        ORDER BY id_producto
+    ) = 1
+
+)
+
+SELECT *
+FROM final

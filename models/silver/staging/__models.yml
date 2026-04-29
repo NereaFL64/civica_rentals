@@ -1,0 +1,166 @@
+version: 2
+
+models:
+
+  - name: stg_usuarios
+    description: "Modelo staging de usuarios. Limpia y normaliza datos de Bronze."
+    columns:
+      - name: id_usuario
+        description: "Identificador único del usuario."
+        tests:
+          - not_null
+          - unique
+
+      - name: nombre
+        description: "Nombre del usuario."
+
+      - name: email
+        description: "Correo electrónico del usuario normalizado."
+        tests:
+          - not_null
+
+      - name: fecha_registro
+        description: "Fecha de registro convertida a tipo DATE."
+        tests:
+          - not_null
+
+      - name: direccion
+        description: "Dirección del usuario."
+
+      - name: ciudad
+        description: "Ciudad del usuario."
+
+      - name: pais
+        description: "País del usuario."
+
+      - name: telefono
+        description: "Teléfono del usuario."
+
+      - name: origen_alta
+        description: "Canal de alta del usuario."
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['WEB', 'APP', 'PARTNER', 'REFERIDO']
+
+  - name: stg_productos
+    description: "Modelo staging de productos."
+    columns:
+      - name: id_producto
+        description: "Identificador único del producto."
+        tests:
+          - not_null
+          - unique
+
+      - name: nombre_producto
+        description: "Nombre del producto."
+
+      - name: descripcion
+        description: "Descripción del producto."
+
+      - name: precio_dia
+        description: "Precio diario del producto."
+        tests:
+          - not_null
+
+      - name: categoria
+        description: "Categoría del producto."
+
+      - name: categoria_padre
+        description: "Categoría superior del producto."
+
+      - name: id_usuario_propietario
+        description: "Usuario propietario del producto."
+
+      - name: estado_producto
+        description: "Estado del producto."
+
+  - name: stg_alquileres
+    description: "Modelo staging de alquileres."
+    columns:
+      - name: id_alquiler
+        description: "Identificador único del alquiler."
+        tests:
+          - not_null
+          - unique
+
+      - name: id_usuario
+        description: "Usuario que realiza el alquiler."
+        tests:
+          - not_null
+
+      - name: id_producto
+        description: "Producto alquilado."
+        tests:
+          - not_null
+
+      - name: fecha_inicio
+        description: "Fecha de inicio del alquiler."
+
+      - name: fecha_fin
+        description: "Fecha de fin del alquiler."
+
+      - name: estado_alquiler
+        description: "Estado del alquiler."
+
+      - name: canal_reserva
+        description: "Canal de reserva."
+
+      - name: codigo_promocional
+        description: "Código promocional aplicado."
+
+  - name: stg_pagos
+    description: "Modelo staging de pagos."
+    columns:
+      - name: id_pago
+        description: "Identificador único del pago."
+        tests:
+          - not_null
+          - unique
+
+      - name: id_alquiler
+        description: "Referencia al alquiler."
+        tests:
+          - not_null
+
+      - name: fecha_pago
+        description: "Fecha en la que se realiza el pago."
+
+      - name: importe
+        description: "Importe del pago."
+        tests:
+          - not_null
+
+      - name: metodo_pago
+        description: "Método de pago utilizado."
+
+      - name: estado_pago
+        description: "Estado del pago."
+
+  - name: stg_resenas
+    description: "Modelo staging de reseñas."
+    columns:
+      - name: id_resena
+        description: "Identificador único de la reseña."
+        tests:
+          - not_null
+          - unique
+
+      - name: id_alquiler
+        description: "Alquiler asociado a la reseña."
+
+      - name: id_producto
+        description: "Producto reseñado."
+
+      - name: rating
+        description: "Puntuación de la reseña."
+        tests:
+        - accepted_values:
+            arguments:
+              values: [1, 2, 3, 4, 5]
+
+      - name: comentario
+        description: "Texto libre de la reseña."
+
+      - name: fecha_resena
+        description: "Fecha en la que se realizó la reseña."
