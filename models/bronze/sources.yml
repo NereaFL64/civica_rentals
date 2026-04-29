@@ -1,0 +1,64 @@
+version: 2
+
+sources:
+  - name: bronze
+    schema: BRONZE
+    database: CIVICA_RENTALS
+
+    quoting:
+      database: false
+      schema: false
+      identifier: false
+
+    tables:
+      - name: USUARIOS
+        columns:
+          - name: ID_USUARIO
+          - name: NOMBRE
+          - name: EMAIL
+          - name: FECHA_REGISTRO
+          - name: DIRECCION
+          - name: CIUDAD
+          - name: PAIS
+          - name: TELEFONO
+          - name: ORIGEN_ALTA
+
+      - name: PRODUCTOS
+        columns:
+          - name: ID_PRODUCTO
+          - name: NOMBRE_PRODUCTO
+          - name: DESCRIPCION
+          - name: PRECIO_DIA
+          - name: CATEGORIA
+          - name: CATEGORIA_PADRE
+          - name: ID_USUARIO_PROPIETARIO
+          - name: ESTADO_PRODUCTO
+
+      - name: ALQUILERES
+        columns:
+          - name: ID_ALQUILER
+          - name: ID_USUARIO
+          - name: ID_PRODUCTO
+          - name: FECHA_INICIO
+          - name: FECHA_FIN
+          - name: ESTADO_ALQUILER
+          - name: CANAL_RESERVA
+          - name: CODIGO_PROMOCIONAL
+
+      - name: PAGOS
+        columns:
+          - name: ID_PAGO
+          - name: ID_ALQUILER
+          - name: FECHA_PAGO
+          - name: IMPORTE
+          - name: METODO_PAGO
+          - name: ESTADO_PAGO
+
+      - name: RESENAS
+        columns:
+          - name: ID_RESENA
+          - name: ID_ALQUILER
+          - name: ID_PRODUCTO
+          - name: RATING
+          - name: COMENTARIO
+          - name: FECHA_RESENA
