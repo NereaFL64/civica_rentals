@@ -5,17 +5,17 @@ WITH productos AS (
 
 ),
 
-categorias AS (
-
-    SELECT *
-    FROM {{ ref('int_categoria') }}
-
-),
-
 usuarios AS (
 
     SELECT id_usuario
     FROM {{ ref('int_usuario') }}
+
+),
+
+categorias AS (
+
+    SELECT *
+    FROM {{ ref('int_categoria') }}
 
 ),
 
@@ -29,15 +29,17 @@ joined AS (
         , p.id_usuario_propietario AS id_usuario
         , c.id_categoria
         , p.estado_producto
+
     FROM productos p
 
     INNER JOIN usuarios u
         ON p.id_usuario_propietario = u.id_usuario
 
     LEFT JOIN categorias c
-        ON p.categoria = c.nombre
+        ON COALESCE(NULLIF(TRIM(p.categoria), ''), 'Sin categoría') = c.nombre
 
     WHERE p.id_producto IS NOT NULL
+      AND c.id_categoria IS NOT NULL
 
 ),
 
