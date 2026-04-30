@@ -1,0 +1,183 @@
+version: 2
+
+models:
+
+  - name: fact_alquileres
+    description: "Tabla de hechos incremental de alquileres."
+    columns:
+      - name: id_alquiler
+        description: "Identificador único del alquiler."
+        tests:
+          - not_null
+          - unique
+
+      - name: sk_usuario
+        description: "Clave surrogate del usuario."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_usuario')
+                field: sk_usuario
+
+      - name: sk_producto
+        description: "Clave surrogate del producto."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_producto')
+                field: sk_producto
+
+      - name: id_fecha_inicio
+        description: "Fecha de inicio del alquiler."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: id_fecha
+
+      - name: id_fecha_fin
+        description: "Fecha de fin del alquiler."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: id_fecha
+
+      - name: duracion_dias
+        description: "Duración del alquiler en días."
+        tests:
+          - not_null
+
+      - name: estado_alquiler
+        description: "Estado del alquiler."
+
+      - name: canal_reserva
+        description: "Canal de reserva."
+
+      - name: codigo_promocional
+        description: "Código promocional aplicado."
+
+      - name: num_alquileres
+        description: "Métrica aditiva para contar alquileres."
+
+  - name: fact_pagos
+    description: "Tabla de hechos incremental de pagos."
+    columns:
+      - name: id_pago
+        description: "Identificador único del pago."
+        tests:
+          - not_null
+          - unique
+
+      - name: id_alquiler
+        description: "Alquiler asociado al pago."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fact_alquileres')
+                field: id_alquiler
+
+      - name: sk_usuario
+        description: "Clave surrogate del usuario asociado al alquiler."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_usuario')
+                field: sk_usuario
+
+      - name: sk_producto
+        description: "Clave surrogate del producto asociado al alquiler."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_producto')
+                field: sk_producto
+
+      - name: id_metodo_pago
+        description: "Método de pago utilizado."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_metodo_pago')
+                field: id_metodo_pago
+
+      - name: id_fecha_pago
+        description: "Fecha del pago."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: id_fecha
+
+      - name: importe
+        description: "Importe pagado."
+        tests:
+          - not_null
+
+      - name: estado_pago
+        description: "Estado del pago."
+
+      - name: num_pagos
+        description: "Métrica aditiva para contar pagos."
+
+  - name: fact_resenas
+    description: "Tabla de hechos incremental de reseñas con sentimiento calculado."
+    columns:
+      - name: id_resena
+        description: "Identificador único de la reseña."
+        tests:
+          - not_null
+          - unique
+
+      - name: id_alquiler
+        description: "Alquiler asociado a la reseña."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('fact_alquileres')
+                field: id_alquiler
+
+      - name: sk_usuario
+        description: "Clave surrogate del usuario asociado al alquiler."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_usuario')
+                field: sk_usuario
+
+      - name: sk_producto
+        description: "Clave surrogate del producto asociado al alquiler."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_producto')
+                field: sk_producto
+
+      - name: id_producto
+        description: "Identificador natural del producto reseñado."
+
+      - name: id_fecha_resena
+        description: "Fecha de la reseña."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_fecha')
+                field: id_fecha
+
+      - name: rating
+        description: "Puntuación de la reseña."
+        tests:
+          - not_null
+
+      - name: sentimiento
+        description: "Sentimiento calculado con AI_SENTIMENT."
+        tests:
+          - not_null
+
+      - name: num_resenas
+        description: "Métrica aditiva para contar reseñas."

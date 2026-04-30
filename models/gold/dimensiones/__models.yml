@@ -1,0 +1,108 @@
+version: 2
+
+models:
+
+  - name: dim_fecha
+    description: "Dimensión de fechas para análisis temporal en Power BI."
+    columns:
+      - name: id_fecha
+        description: "Clave de la fecha."
+        tests:
+          - not_null
+          - unique
+      - name: fecha
+        description: "Fecha completa."
+      - name: anio
+        description: "Año de la fecha."
+      - name: mes
+        description: "Mes numérico."
+      - name: dia
+        description: "Día del mes."
+      - name: dia_semana
+        description: "Día de la semana."
+      - name: nombre_mes
+        description: "Nombre del mes."
+      - name: tipo_dia
+        description: "Laboral o fin de semana."
+
+  - name: dim_usuario
+    description: "Dimensión de usuarios con histórico SCD2."
+    columns:
+      - name: sk_usuario
+        description: "Clave surrogate SCD2 del usuario."
+        tests:
+          - not_null
+          - unique
+      - name: id_usuario
+        description: "Identificador natural del usuario."
+        tests:
+          - not_null
+      - name: nombre
+        description: "Nombre del usuario."
+      - name: email
+        description: "Correo electrónico del usuario."
+      - name: fecha_registro
+        description: "Fecha de registro."
+      - name: id_ubicacion
+        description: "Ubicación asociada al usuario."
+      - name: telefono
+        description: "Teléfono del usuario."
+      - name: origen_alta
+        description: "Canal de alta."
+      - name: valid_from
+        description: "Inicio de validez de la versión."
+        tests:
+          - not_null
+      - name: valid_to
+        description: "Fin de validez de la versión."
+      - name: is_current
+        description: "Indica si es la versión vigente."
+
+  - name: dim_producto
+    description: "Dimensión de productos con histórico SCD2."
+    columns:
+      - name: sk_producto
+        description: "Clave surrogate SCD2 del producto."
+        tests:
+          - not_null
+          - unique
+      - name: id_producto
+        description: "Identificador natural del producto."
+        tests:
+          - not_null
+      - name: nombre_producto
+        description: "Nombre del producto."
+      - name: descripcion
+        description: "Descripción del producto."
+      - name: precio_dia
+        description: "Precio diario."
+      - name: id_usuario_propietario
+        description: "Usuario propietario."
+      - name: id_categoria
+        description: "Categoría del producto."
+      - name: categoria
+        description: "Nombre de la categoría."
+      - name: estado_producto
+        description: "Estado del producto."
+      - name: valid_from
+        description: "Inicio de validez de la versión."
+        tests:
+          - not_null
+      - name: valid_to
+        description: "Fin de validez de la versión."
+      - name: is_current
+        description: "Indica si es la versión vigente."
+
+  - name: dim_metodo_pago
+    description: "Dimensión de métodos de pago."
+    columns:
+      - name: id_metodo_pago
+        description: "Identificador del método de pago."
+        tests:
+          - not_null
+          - unique
+      - name: metodo_pago
+        description: "Nombre del método de pago."
+        tests:
+          - not_null
+          - unique
