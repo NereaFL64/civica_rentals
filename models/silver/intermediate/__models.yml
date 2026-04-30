@@ -1,0 +1,271 @@
+version: 2
+
+models:
+
+  - name: int_pais
+    description: "Entidad país derivada desde los usuarios."
+    columns:
+      - name: id_pais
+        description: "Identificador único del país."
+        tests:
+          - not_null
+          - unique
+      - name: nombre
+        description: "Nombre del país."
+        tests:
+          - not_null
+
+  - name: int_ciudad
+    description: "Entidad ciudad asociada a un país."
+    columns:
+      - name: id_ciudad
+        description: "Identificador único de la ciudad."
+        tests:
+          - not_null
+          - unique
+      - name: nombre
+        description: "Nombre de la ciudad."
+        tests:
+          - not_null
+      - name: id_pais
+        description: "País al que pertenece la ciudad."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_pais')
+                field: id_pais
+
+  - name: int_ubicacion
+    description: "Entidad ubicación asociada a una ciudad."
+    columns:
+      - name: id_ubicacion
+        description: "Identificador único de la ubicación."
+        tests:
+          - not_null
+          - unique
+      - name: calle
+        description: "Dirección o calle de la ubicación."
+        tests:
+          - not_null
+      - name: id_ciudad
+        description: "Ciudad asociada a la ubicación."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_ciudad')
+                field: id_ciudad
+
+  - name: int_usuario
+    description: "Entidad usuario limpia y relacionada con ubicación."
+    columns:
+      - name: id_usuario
+        description: "Identificador único del usuario."
+        tests:
+          - not_null
+          - unique
+      - name: nombre
+        description: "Nombre del usuario."
+      - name: email
+        description: "Correo electrónico del usuario."
+        tests:
+          - not_null
+      - name: fecha_registro
+        description: "Fecha de registro del usuario."
+        tests:
+          - not_null
+      - name: id_ubicacion
+        description: "Ubicación asociada al usuario."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('int_ubicacion')
+                field: id_ubicacion
+      - name: telefono
+        description: "Teléfono del usuario."
+      - name: origen_alta
+        description: "Canal de alta del usuario."
+
+  - name: int_categoria
+    description: "Entidad categoría con jerarquía padre-hijo."
+    columns:
+      - name: id_categoria
+        description: "Identificador único de la categoría."
+        tests:
+          - not_null
+          - unique
+      - name: nombre
+        description: "Nombre de la categoría."
+        tests:
+          - not_null
+      - name: id_categoria_padre
+        description: "Categoría superior, si existe."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('int_categoria')
+                field: id_categoria
+
+  - name: int_producto
+    description: "Entidad producto limpia y relacionada con usuario propietario y categoría."
+    columns:
+      - name: id_producto
+        description: "Identificador único del producto."
+        tests:
+          - not_null
+          - unique
+      - name: nombre
+        description: "Nombre del producto."
+        tests:
+          - not_null
+      - name: descripcion
+        description: "Descripción del producto."
+      - name: precio_dia
+        description: "Precio diario del producto."
+        tests:
+          - not_null
+      - name: id_usuario
+        description: "Usuario propietario del producto."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('int_usuario')
+                field: id_usuario
+      - name: id_categoria
+        description: "Categoría del producto."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('int_categoria')
+                field: id_categoria
+      - name: estado_producto
+        description: "Estado del producto."
+
+  - name: int_alquiler
+    description: "Entidad alquiler limpia con fechas coherentes y duración calculada."
+    columns:
+      - name: id_alquiler
+        description: "Identificador único del alquiler."
+        tests:
+          - not_null
+          - unique
+      - name: id_usuario
+        description: "Usuario que realiza el alquiler."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_usuario')
+                field: id_usuario
+      - name: id_producto
+        description: "Producto alquilado."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_producto')
+                field: id_producto
+      - name: fecha_inicio
+        description: "Fecha de inicio del alquiler."
+        tests:
+          - not_null
+      - name: fecha_fin
+        description: "Fecha de fin del alquiler."
+        tests:
+          - not_null
+      - name: estado_alquiler
+        description: "Estado del alquiler."
+      - name: canal_reserva
+        description: "Canal de reserva."
+      - name: codigo_promocional
+        description: "Código promocional aplicado."
+      - name: duracion_dias
+        description: "Duración del alquiler en días."
+
+  - name: int_metodo_pago
+    description: "Entidad método de pago."
+    columns:
+      - name: id_metodo_pago
+        description: "Identificador único del método de pago."
+        tests:
+          - not_null
+          - unique
+      - name: nombre
+        description: "Nombre del método de pago."
+        tests:
+          - not_null
+          - unique
+
+  - name: int_pago
+    description: "Entidad pago limpia asociada a alquiler y método de pago."
+    columns:
+      - name: id_pago
+        description: "Identificador único del pago."
+        tests:
+          - not_null
+          - unique
+      - name: id_alquiler
+        description: "Alquiler asociado al pago."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_alquiler')
+                field: id_alquiler
+      - name: fecha_pago
+        description: "Fecha del pago."
+      - name: importe
+        description: "Importe del pago."
+        tests:
+          - not_null
+      - name: id_metodo_pago
+        description: "Método de pago utilizado."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_metodo_pago')
+                field: id_metodo_pago
+      - name: estado_pago
+        description: "Estado del pago."
+
+  - name: int_resena
+    description: "Entidad reseña limpia con sentimiento calculado mediante Snowflake AI_SENTIMENT."
+    columns:
+      - name: id_resena
+        description: "Identificador único de la reseña."
+        tests:
+          - not_null
+          - unique
+      - name: id_alquiler
+        description: "Alquiler asociado a la reseña."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_alquiler')
+                field: id_alquiler
+      - name: id_producto
+        description: "Producto reseñado."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_producto')
+                field: id_producto
+      - name: rating
+        description: "Puntuación de la reseña."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5]
+      - name: comentario
+        description: "Texto de la reseña."
+        tests:
+          - not_null
+      - name: fecha_resena
+        description: "Fecha de la reseña."
+      - name: sentimiento
+        description: "Sentimiento calculado con AI_SENTIMENT sobre el comentario."
