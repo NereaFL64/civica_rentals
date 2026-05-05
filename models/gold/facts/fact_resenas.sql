@@ -9,7 +9,7 @@
 WITH resenas AS (
 
     SELECT *
-    FROM {{ ref('int_resena') }}
+    FROM {{ ref('int_resena_sentimiento') }}
 
 ),
 

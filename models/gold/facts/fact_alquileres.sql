@@ -15,7 +15,9 @@ WITH alquileres AS (
 
 usuarios AS (
 
-    SELECT *
+    SELECT
+          sk_usuario
+        , id_usuario
     FROM {{ ref('dim_usuario') }}
     WHERE is_current = TRUE
 
@@ -23,7 +25,9 @@ usuarios AS (
 
 productos AS (
 
-    SELECT *
+    SELECT
+          sk_producto
+        , id_producto
     FROM {{ ref('dim_producto') }}
     WHERE is_current = TRUE
 
@@ -45,15 +49,15 @@ final AS (
 
     FROM alquileres a
 
-    LEFT JOIN usuarios u
+    INNER JOIN usuarios u
         ON a.id_usuario = u.id_usuario
 
-    LEFT JOIN productos p
+    INNER JOIN productos p
         ON a.id_producto = p.id_producto
 
     {% if is_incremental() %}
-    WHERE a.fecha_inicio > (
-        SELECT COALESCE(MAX(id_fecha_inicio), '1900-01-01')
+    WHERE a.id_alquiler NOT IN (
+        SELECT id_alquiler
         FROM {{ this }}
     )
     {% endif %}
