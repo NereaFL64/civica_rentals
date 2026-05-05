@@ -1,4 +1,9 @@
 -- models/silver/intermediate/int_resena.sql
+{{
+  config(
+    materialized='table'
+  )
+}}
 
 WITH resenas AS (
 
