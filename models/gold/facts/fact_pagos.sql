@@ -1,14 +1,18 @@
 {{
   config(
-    materialized='incremental',
-    unique_key='id_pago',
-    incremental_strategy='merge'
+    materialized='table'
   )
 }}
 
 WITH pagos AS (
 
-    SELECT *
+    SELECT
+          id_pago
+        , id_alquiler
+        , fecha_pago
+        , importe
+        , id_metodo_pago
+        , estado_pago
     FROM {{ ref('int_pago') }}
 
 ),
@@ -20,20 +24,6 @@ alquileres AS (
         , sk_usuario
         , sk_producto
     FROM {{ ref('fact_alquileres') }}
-
-),
-
-pagos_nuevos AS (
-
-    SELECT *
-    FROM pagos
-
-    {% if is_incremental() %}
-    WHERE id_pago NOT IN (
-        SELECT id_pago
-        FROM {{ this }}
-    )
-    {% endif %}
 
 ),
 
@@ -50,7 +40,7 @@ final AS (
         , p.estado_pago
         , 1 AS num_pagos
 
-    FROM pagos_nuevos p
+    FROM pagos p
 
     INNER JOIN alquileres a
         ON p.id_alquiler = a.id_alquiler
