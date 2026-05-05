@@ -1,3 +1,5 @@
+-- models/silver/intermediate/int_resena.sql
+
 WITH resenas AS (
 
     SELECT *
@@ -28,7 +30,6 @@ validated AS (
         , r.rating
         , r.comentario
         , r.fecha_resena
-        , AI_SENTIMENT(r.comentario) AS sentimiento
 
     FROM resenas r
 

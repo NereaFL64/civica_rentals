@@ -15,8 +15,25 @@ WITH pagos AS (
 
 alquileres AS (
 
-    SELECT *
+    SELECT
+          id_alquiler
+        , sk_usuario
+        , sk_producto
     FROM {{ ref('fact_alquileres') }}
+
+),
+
+pagos_nuevos AS (
+
+    SELECT *
+    FROM pagos
+
+    {% if is_incremental() %}
+    WHERE id_pago NOT IN (
+        SELECT id_pago
+        FROM {{ this }}
+    )
+    {% endif %}
 
 ),
 
@@ -33,17 +50,10 @@ final AS (
         , p.estado_pago
         , 1 AS num_pagos
 
-    FROM pagos p
+    FROM pagos_nuevos p
 
-    LEFT JOIN alquileres a
+    INNER JOIN alquileres a
         ON p.id_alquiler = a.id_alquiler
-
-    {% if is_incremental() %}
-    WHERE p.fecha_pago > (
-        SELECT COALESCE(MAX(id_fecha_pago), '1900-01-01')
-        FROM {{ this }}
-    )
-    {% endif %}
 
 )
 

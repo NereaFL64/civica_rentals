@@ -231,13 +231,14 @@ models:
         description: "Estado del pago."
 
   - name: int_resena
-    description: "Entidad reseña limpia con sentimiento calculado mediante Snowflake AI_SENTIMENT."
+    description: "Entidad reseña limpia y validada, sin cálculo de sentimiento para mantener Silver optimizado."
     columns:
       - name: id_resena
         description: "Identificador único de la reseña."
         tests:
           - not_null
           - unique
+
       - name: id_alquiler
         description: "Alquiler asociado a la reseña."
         tests:
@@ -246,6 +247,7 @@ models:
               arguments:
                 to: ref('int_alquiler')
                 field: id_alquiler
+
       - name: id_producto
         description: "Producto reseñado."
         tests:
@@ -254,6 +256,7 @@ models:
               arguments:
                 to: ref('int_producto')
                 field: id_producto
+
       - name: rating
         description: "Puntuación de la reseña."
         tests:
@@ -261,11 +264,57 @@ models:
           - accepted_values:
               arguments:
                 values: [1, 2, 3, 4, 5]
+
       - name: comentario
         description: "Texto de la reseña."
         tests:
           - not_null
+
       - name: fecha_resena
         description: "Fecha de la reseña."
+
+  - name: int_resena_sentimiento
+    description: "Modelo que enriquece las reseñas limpias con análisis de sentimiento mediante Snowflake AI_SENTIMENT."
+    columns:
+      - name: id_resena
+        description: "Identificador único de la reseña."
+        tests:
+          - not_null
+          - unique
+
+      - name: id_alquiler
+        description: "Alquiler asociado a la reseña."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_alquiler')
+                field: id_alquiler
+
+      - name: id_producto
+        description: "Producto reseñado."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_producto')
+                field: id_producto
+
+      - name: rating
+        description: "Puntuación de la reseña."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5]
+
+      - name: comentario
+        description: "Texto de la reseña."
+
+      - name: fecha_resena
+        description: "Fecha de la reseña."
+
       - name: sentimiento
         description: "Sentimiento calculado con AI_SENTIMENT sobre el comentario."
+        tests:
+          - not_null
