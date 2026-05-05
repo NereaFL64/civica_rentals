@@ -109,6 +109,7 @@ models:
       - name: id_fecha_pago
         description: "Fecha del pago."
         tests:
+          - not_null
           - relationships:
               arguments:
                 to: ref('dim_fecha')
