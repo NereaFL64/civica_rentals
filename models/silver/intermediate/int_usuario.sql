@@ -16,17 +16,20 @@ ubicaciones AS (
     SELECT
           u.id_ubicacion
         , u.calle
-        , c.nombre AS ciudad
-        , p.nombre AS pais
+        , c.nombre AS nombre_ciudad
+        , p.nombre AS nombre_pais
+
     FROM {{ ref('int_ubicacion') }} u
-    LEFT JOIN {{ ref('int_ciudad') }} c
+
+    INNER JOIN {{ ref('int_ciudad') }} c
         ON u.id_ciudad = c.id_ciudad
-    LEFT JOIN {{ ref('int_pais') }} p
+
+    INNER JOIN {{ ref('int_pais') }} p
         ON c.id_pais = p.id_pais
 
 ),
 
-final AS (
+joined AS (
 
     SELECT
           us.id_usuario
@@ -36,11 +39,27 @@ final AS (
         , ub.id_ubicacion
         , us.telefono
         , us.origen_alta
+
     FROM usuarios us
-    LEFT JOIN ubicaciones ub
-        ON COALESCE(us.direccion, 'Dirección desconocida') = ub.calle
-       AND UPPER(us.ciudad) = ub.ciudad
-       AND UPPER(us.pais) = ub.pais
+
+    INNER JOIN ubicaciones ub
+        ON COALESCE(NULLIF(TRIM(us.direccion), ''), 'Dirección desconocida') = ub.calle
+       AND UPPER(TRIM(us.ciudad)) = ub.nombre_ciudad
+       AND UPPER(TRIM(us.pais)) = ub.nombre_pais
+
+    WHERE us.id_usuario IS NOT NULL
+
+),
+
+final AS (
+
+    SELECT *
+    FROM joined
+
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY id_usuario
+        ORDER BY fecha_registro DESC NULLS LAST
+    ) = 1
 
 )
 

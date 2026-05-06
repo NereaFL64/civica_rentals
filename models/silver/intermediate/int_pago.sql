@@ -1,9 +1,3 @@
-{{
-  config(
-    materialized='table'
-  )
-}}
-
 WITH pagos AS (
 
     SELECT *
@@ -41,12 +35,13 @@ validated AS (
         ON p.id_alquiler = a.id_alquiler
 
     INNER JOIN metodos m
-        ON p.metodo_pago = m.nombre
+        ON TRIM(UPPER(p.metodo_pago)) = m.nombre
 
     WHERE p.id_pago IS NOT NULL
       AND p.id_alquiler IS NOT NULL
       AND p.importe IS NOT NULL
       AND p.importe >= 0
+      AND p.fecha_pago IS NOT NULL
 
 ),
 

@@ -7,7 +7,9 @@ WITH producto_scd2 AS (
 
 categorias AS (
 
-    SELECT *
+    SELECT
+          id_categoria
+        , nombre AS categoria
     FROM {{ ref('int_categoria') }}
 
 ),
@@ -22,7 +24,7 @@ final AS (
         , p.precio_dia
         , p.id_usuario AS id_usuario_propietario
         , p.id_categoria
-        , c.nombre AS categoria
+        , c.categoria
         , p.estado_producto
         , p.dbt_valid_from AS valid_from
         , p.dbt_valid_to AS valid_to
@@ -34,7 +36,7 @@ final AS (
     FROM producto_scd2 p
 
     LEFT JOIN categorias c
-        ON p.id_categoria = c.id_categoria
+        ON TO_VARCHAR(p.id_categoria) = TO_VARCHAR(c.id_categoria)
 
 )
 

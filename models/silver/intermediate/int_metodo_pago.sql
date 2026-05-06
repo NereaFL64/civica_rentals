@@ -1,16 +1,25 @@
-WITH metodos AS (
+WITH pagos AS (
+
+    SELECT *
+    FROM {{ ref('stg_pagos') }}
+
+),
+
+metodos AS (
 
     SELECT DISTINCT
-          COALESCE(NULLIF(TRIM(metodo_pago), ''), 'DESCONOCIDO') AS nombre
-    FROM {{ ref('stg_pagos') }}
+        TRIM(UPPER(metodo_pago)) AS nombre
+    FROM pagos
+    WHERE metodo_pago IS NOT NULL
 
 ),
 
 final AS (
 
     SELECT
-          ROW_NUMBER() OVER (ORDER BY nombre) AS id_metodo_pago
+          {{ dbt_utils.generate_surrogate_key(['nombre']) }} AS id_metodo_pago
         , nombre
+
     FROM metodos
 
 )

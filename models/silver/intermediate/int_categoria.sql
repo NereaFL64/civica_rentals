@@ -14,65 +14,29 @@ categorias_origen AS (
 
 ),
 
-categorias_padre AS (
-
-    SELECT DISTINCT
-          nombre_categoria_padre AS nombre
-        , NULL AS nombre_categoria_padre
-    FROM categorias_origen
-    WHERE nombre_categoria_padre IS NOT NULL
-
-),
-
-categorias_hijo AS (
-
-    SELECT DISTINCT
-          nombre
-        , nombre_categoria_padre
-    FROM categorias_origen
-
-),
-
-categorias_union AS (
-
-    SELECT * FROM categorias_padre
-    UNION ALL
-    SELECT * FROM categorias_hijo
-
-),
-
 categorias_deduplicadas AS (
 
     SELECT
           nombre
         , MAX(nombre_categoria_padre) AS nombre_categoria_padre
-    FROM categorias_union
+    FROM categorias_origen
     GROUP BY nombre
-
-),
-
-categorias_con_id AS (
-
-    SELECT
-          ROW_NUMBER() OVER (ORDER BY nombre) AS id_categoria
-        , nombre
-        , nombre_categoria_padre
-    FROM categorias_deduplicadas
 
 ),
 
 final AS (
 
     SELECT
-          c.id_categoria
-        , c.nombre
-        , p.id_categoria AS id_categoria_padre
+          {{ dbt_utils.generate_surrogate_key(['nombre']) }} AS id_categoria
+        , nombre
+        , CASE
+            WHEN nombre_categoria_padre IS NOT NULL
+             AND nombre_categoria_padre != nombre
+            THEN {{ dbt_utils.generate_surrogate_key(['nombre_categoria_padre']) }}
+            ELSE NULL
+          END AS id_categoria_padre
 
-    FROM categorias_con_id c
-
-    LEFT JOIN categorias_con_id p
-        ON c.nombre_categoria_padre = p.nombre
-       AND c.nombre != p.nombre
+    FROM categorias_deduplicadas
 
 )
 

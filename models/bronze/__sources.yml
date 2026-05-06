@@ -12,6 +12,11 @@ sources:
 
     tables:
       - name: USUARIOS
+        config: 
+            freshness:
+              warn_after: {count: 24, period: hour}
+              error_after: {count: 48, period: hour}
+            loaded_at_field: TRY_TO_TIMESTAMP(FECHA_REGISTRO)
         columns:
           - name: ID_USUARIO
           - name: NOMBRE
@@ -46,6 +51,11 @@ sources:
           - name: CODIGO_PROMOCIONAL
 
       - name: PAGOS
+        config: 
+          freshness:
+            warn_after: {count: 24, period: hour}
+            error_after: {count: 48, period: hour}
+          loaded_at_field: TRY_TO_TIMESTAMP(FECHA_PAGO)
         columns:
           - name: ID_PAGO
           - name: ID_ALQUILER
@@ -55,6 +65,11 @@ sources:
           - name: ESTADO_PAGO
 
       - name: RESENAS
+        config: 
+          freshness:
+            warn_after: {count: 24, period: hour}
+            error_after: {count: 48, period: hour}
+          loaded_at_field: TRY_TO_TIMESTAMP(FECHA_RESENA)
         columns:
           - name: ID_RESENA
           - name: ID_ALQUILER

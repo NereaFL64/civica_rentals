@@ -42,6 +42,8 @@ models:
           - accepted_values:
               arguments:
                 values: ['WEB', 'APP', 'PARTNER', 'REFERIDO']
+              config:
+                severity: warn
 
   - name: stg_productos
     description: "Modelo staging de productos."

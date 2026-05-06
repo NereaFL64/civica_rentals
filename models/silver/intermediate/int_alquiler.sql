@@ -1,9 +1,3 @@
-{{
-  config(
-    materialized='table'
-  )
-}}
-
 WITH alquileres AS (
 
     SELECT *
