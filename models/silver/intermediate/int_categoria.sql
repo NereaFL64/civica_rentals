@@ -51,28 +51,19 @@ categorias_deduplicadas AS (
 
 ),
 
-categorias_con_id AS (
-
-    SELECT
-          ROW_NUMBER() OVER (ORDER BY nombre) AS id_categoria
-        , nombre
-        , nombre_categoria_padre
-    FROM categorias_deduplicadas
-
-),
-
 final AS (
 
     SELECT
-          c.id_categoria
-        , c.nombre
-        , p.id_categoria AS id_categoria_padre
+          {{ dbt_utils.generate_surrogate_key(['nombre']) }} AS id_categoria
+        , nombre
+        , CASE
+            WHEN nombre_categoria_padre IS NOT NULL
+             AND nombre_categoria_padre != nombre
+            THEN {{ dbt_utils.generate_surrogate_key(['nombre_categoria_padre']) }}
+            ELSE NULL
+          END AS id_categoria_padre
 
-    FROM categorias_con_id c
-
-    LEFT JOIN categorias_con_id p
-        ON c.nombre_categoria_padre = p.nombre
-       AND c.nombre != p.nombre
+    FROM categorias_deduplicadas
 
 )
 
