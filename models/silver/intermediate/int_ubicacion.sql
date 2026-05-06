@@ -17,21 +17,36 @@ ciudades AS (
         , c.nombre AS nombre_ciudad
         , p.nombre AS nombre_pais
     FROM {{ ref('int_ciudad') }} c
+
     LEFT JOIN {{ ref('int_pais') }} p
         ON c.id_pais = p.id_pais
 
 ),
 
-final AS (
+joined AS (
 
     SELECT
-          ROW_NUMBER() OVER (ORDER BY u.nombre_pais, u.nombre_ciudad, u.calle) AS id_ubicacion
+          {{ dbt_utils.generate_surrogate_key(['u.calle', 'u.nombre_ciudad', 'u.nombre_pais']) }} AS id_ubicacion
         , u.calle
         , c.id_ciudad
+
     FROM ubicaciones u
-    LEFT JOIN ciudades c
+
+    INNER JOIN ciudades c
         ON u.nombre_ciudad = c.nombre_ciudad
        AND u.nombre_pais = c.nombre_pais
+
+),
+
+final AS (
+
+    SELECT *
+    FROM joined
+
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY id_ubicacion
+        ORDER BY calle
+    ) = 1
 
 )
 

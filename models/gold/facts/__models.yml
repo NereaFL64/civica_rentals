@@ -3,7 +3,7 @@ version: 2
 models:
 
   - name: fact_alquileres
-    description: "Tabla de hechos incremental de alquileres."
+    description: "{{ doc('arquitectura_capas') }}"
     columns:
       - name: id_alquiler
         description: "Identificador único del alquiler."
@@ -71,6 +71,7 @@ models:
         tests:
           - not_null
           - unique
+          
 
       - name: id_alquiler
         description: "Alquiler asociado al pago."
@@ -174,6 +175,10 @@ models:
         description: "Puntuación de la reseña."
         tests:
           - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1
+                max_value: 5
 
       - name: sentimiento
         description: "Sentimiento calculado con AI_SENTIMENT."

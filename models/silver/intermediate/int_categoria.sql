@@ -14,39 +14,12 @@ categorias_origen AS (
 
 ),
 
-categorias_padre AS (
-
-    SELECT DISTINCT
-          nombre_categoria_padre AS nombre
-        , NULL AS nombre_categoria_padre
-    FROM categorias_origen
-    WHERE nombre_categoria_padre IS NOT NULL
-
-),
-
-categorias_hijo AS (
-
-    SELECT DISTINCT
-          nombre
-        , nombre_categoria_padre
-    FROM categorias_origen
-
-),
-
-categorias_union AS (
-
-    SELECT * FROM categorias_padre
-    UNION ALL
-    SELECT * FROM categorias_hijo
-
-),
-
 categorias_deduplicadas AS (
 
     SELECT
           nombre
         , MAX(nombre_categoria_padre) AS nombre_categoria_padre
-    FROM categorias_union
+    FROM categorias_origen
     GROUP BY nombre
 
 ),

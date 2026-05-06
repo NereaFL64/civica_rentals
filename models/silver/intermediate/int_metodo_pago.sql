@@ -8,7 +8,7 @@ WITH pagos AS (
 metodos AS (
 
     SELECT DISTINCT
-          TRIM(UPPER(metodo_pago)) AS nombre
+        TRIM(UPPER(metodo_pago)) AS nombre
     FROM pagos
     WHERE metodo_pago IS NOT NULL
 

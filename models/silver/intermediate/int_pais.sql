@@ -1,17 +1,24 @@
-WITH paises AS (
+WITH usuarios AS (
+
+    SELECT *
+    FROM {{ ref('stg_usuarios') }}
+
+),
+
+paises AS (
 
     SELECT DISTINCT
-          UPPER(TRIM(pais)) AS nombre_pais
-    FROM {{ ref('stg_usuarios') }}
-    WHERE pais IS NOT NULL
+        COALESCE(NULLIF(TRIM(pais), ''), 'Sin país') AS nombre_pais
+    FROM usuarios
 
 ),
 
 final AS (
 
     SELECT
-          ROW_NUMBER() OVER (ORDER BY nombre_pais) AS id_pais
+          {{ dbt_utils.generate_surrogate_key(['nombre_pais']) }} AS id_pais
         , nombre_pais AS nombre
+
     FROM paises
 
 )

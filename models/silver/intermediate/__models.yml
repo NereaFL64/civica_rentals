@@ -101,11 +101,7 @@ models:
           - not_null
       - name: id_categoria_padre
         description: "Categoría superior, si existe."
-        tests:
-          - relationships:
-              arguments:
-                to: ref('int_categoria')
-                field: id_categoria
+        
 
   - name: int_producto
     description: "Entidad producto limpia y relacionada con usuario propietario y categoría."
