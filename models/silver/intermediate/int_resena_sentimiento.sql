@@ -13,6 +13,21 @@ WITH resenas AS (
 
 ),
 
+sentimiento AS (
+
+    SELECT
+          id_resena
+        , id_alquiler
+        , id_producto
+        , rating
+        , comentario
+        , fecha_resena
+        , AI_SENTIMENT(comentario) AS sentimiento_raw
+
+    FROM resenas
+
+),
+
 final AS (
 
     SELECT
@@ -22,16 +37,9 @@ final AS (
         , rating
         , comentario
         , fecha_resena
-        , AI_SENTIMENT(comentario) AS sentimiento
+        , sentimiento_raw:categories[0]:sentiment::STRING AS sentimiento
 
-    FROM resenas
-
-    {% if is_incremental() %}
-    WHERE fecha_resena > (
-        SELECT COALESCE(MAX(fecha_resena), '1900-01-01')
-        FROM {{ this }}
-    )
-    {% endif %}
+    FROM sentimiento
 
 )
 
