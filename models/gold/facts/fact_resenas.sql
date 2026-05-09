@@ -41,11 +41,13 @@ final AS (
     INNER JOIN alquileres a
         ON r.id_alquiler = a.id_alquiler
 
+    WHERE r.fecha_resena BETWEEN '2020-01-01' AND '2026-12-31'
+
     {% if is_incremental() %}
-    WHERE r.id_resena NOT IN (
-        SELECT id_resena
-        FROM {{ this }}
-    )
+      AND r.id_resena NOT IN (
+          SELECT id_resena
+          FROM {{ this }}
+      )
     {% endif %}
 
 )
