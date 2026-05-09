@@ -36,7 +36,7 @@ joined AS (
         ON p.id_usuario_propietario = u.id_usuario
 
     INNER JOIN categorias c
-        ON COALESCE(NULLIF(TRIM(p.categoria), ''), 'Sin categoría') = c.nombre
+        ON COALESCE(NULLIF(UPPER(TRIM(p.categoria)), ''), 'SIN CATEGORÍA') = c.nombre
 
     WHERE p.id_producto IS NOT NULL
 

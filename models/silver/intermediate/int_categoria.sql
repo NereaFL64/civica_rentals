@@ -1,3 +1,9 @@
+{{
+  config(
+    materialized='table'
+  )
+}}
+
 WITH productos AS (
 
     SELECT *
@@ -8,8 +14,8 @@ WITH productos AS (
 categorias_origen AS (
 
     SELECT DISTINCT
-          COALESCE(NULLIF(TRIM(categoria), ''), 'Sin categoría') AS nombre
-        , COALESCE(NULLIF(TRIM(categoria_padre), ''), 'Sin categoría') AS nombre_categoria_padre
+          COALESCE(NULLIF(UPPER(TRIM(categoria)), ''), 'SIN CATEGORÍA') AS nombre
+        , COALESCE(NULLIF(UPPER(TRIM(categoria_padre)), ''), 'SIN CATEGORÍA') AS nombre_categoria_padre
     FROM productos
 
 ),
