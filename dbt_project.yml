@@ -38,6 +38,7 @@ models:
   civica_rentals:
 
     silver:
+      +schema: SILVER
 
       staging:
         +materialized: view
@@ -46,4 +47,8 @@ models:
         +materialized: table
 
     gold:
+      +schema: GOLD
+
+      dimensiones:
       +materialized: table
+      
