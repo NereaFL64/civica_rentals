@@ -55,11 +55,13 @@ final AS (
     INNER JOIN productos p
         ON a.id_producto = p.id_producto
 
+    WHERE a.fecha_inicio BETWEEN '2020-01-01' AND '2026-12-31'
+
     {% if is_incremental() %}
-    WHERE a.id_alquiler NOT IN (
-        SELECT id_alquiler
-        FROM {{ this }}
-    )
+      AND a.id_alquiler NOT IN (
+          SELECT id_alquiler
+          FROM {{ this }}
+      )
     {% endif %}
 
 )

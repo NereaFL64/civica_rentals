@@ -14,14 +14,7 @@ WITH pagos AS (
         , id_metodo_pago
         , estado_pago
     FROM {{ ref('int_pago') }}
-    WHERE fecha_pago IS NOT NULL
-
-    {% if is_incremental() %}
-      AND id_pago > (
-          SELECT COALESCE(MAX(id_pago), 0)
-          FROM {{ this }}
-      )
-    {% endif %}
+    WHERE fecha_pago BETWEEN '2020-01-01' AND '2026-12-31'
 
 ),
 
