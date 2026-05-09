@@ -9,12 +9,13 @@ WITH pagos AS (
     SELECT
           id_pago
         , id_alquiler
-        , fecha_pago
+        , TO_DATE(fecha_pago) AS fecha_pago
         , importe
         , id_metodo_pago
         , estado_pago
     FROM {{ ref('int_pago') }}
-    WHERE fecha_pago BETWEEN '2020-01-01' AND '2026-12-31'
+    WHERE fecha_pago IS NOT NULL
+      AND TO_DATE(fecha_pago) BETWEEN '2020-01-01' AND '2026-12-31'
 
 ),
 
