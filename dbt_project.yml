@@ -50,5 +50,8 @@ models:
       +schema: GOLD
 
       dimensiones:
-      +materialized: table
-      
+        +materialized: table
+
+      facts:
+        +materialized: incremental
+
