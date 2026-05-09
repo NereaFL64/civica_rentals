@@ -14,15 +14,15 @@ WITH usuarios AS (
 ubicaciones AS (
 
     SELECT
-          u.id_ubicacion
-        , u.calle
+          ub.id_ubicacion
+        , ub.calle
         , c.nombre AS nombre_ciudad
         , p.nombre AS nombre_pais
 
-    FROM {{ ref('int_ubicacion') }} u
+    FROM {{ ref('int_ubicacion') }} ub
 
     INNER JOIN {{ ref('int_ciudad') }} c
-        ON u.id_ciudad = c.id_ciudad
+        ON ub.id_ciudad = c.id_ciudad
 
     INNER JOIN {{ ref('int_pais') }} p
         ON c.id_pais = p.id_pais
@@ -32,22 +32,22 @@ ubicaciones AS (
 joined AS (
 
     SELECT
-          us.id_usuario
-        , us.nombre
-        , us.email
-        , us.fecha_registro
+          u.id_usuario
+        , u.nombre
+        , u.email
+        , u.fecha_registro
         , ub.id_ubicacion
-        , us.telefono
-        , us.origen_alta
+        , u.telefono
+        , u.origen_alta
 
-    FROM usuarios us
+    FROM usuarios u
 
     INNER JOIN ubicaciones ub
-        ON COALESCE(NULLIF(TRIM(us.direccion), ''), 'Dirección desconocida') = ub.calle
-       AND UPPER(TRIM(us.ciudad)) = ub.nombre_ciudad
-       AND UPPER(TRIM(us.pais)) = ub.nombre_pais
+        ON UPPER(TRIM(COALESCE(u.direccion, 'Dirección desconocida'))) = UPPER(TRIM(ub.calle))
+       AND UPPER(TRIM(COALESCE(u.ciudad, 'Sin ciudad'))) = UPPER(TRIM(ub.nombre_ciudad))
+       AND UPPER(TRIM(COALESCE(u.pais, 'Sin país'))) = UPPER(TRIM(ub.nombre_pais))
 
-    WHERE us.id_usuario IS NOT NULL
+    WHERE u.id_usuario IS NOT NULL
 
 ),
 
