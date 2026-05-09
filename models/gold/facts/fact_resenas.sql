@@ -15,7 +15,10 @@ WITH resenas AS (
 
 alquileres AS (
 
-    SELECT *
+    SELECT
+          id_alquiler
+        , sk_usuario
+        , sk_producto
     FROM {{ ref('fact_alquileres') }}
 
 ),
@@ -35,12 +38,12 @@ final AS (
 
     FROM resenas r
 
-    LEFT JOIN alquileres a
+    INNER JOIN alquileres a
         ON r.id_alquiler = a.id_alquiler
 
     {% if is_incremental() %}
-    WHERE r.fecha_resena > (
-        SELECT COALESCE(MAX(id_fecha_resena), '1900-01-01')
+    WHERE r.id_resena NOT IN (
+        SELECT id_resena
         FROM {{ this }}
     )
     {% endif %}
