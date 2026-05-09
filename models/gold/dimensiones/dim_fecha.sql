@@ -1,8 +1,14 @@
+{{
+  config(
+    materialized='table'
+  )
+}}
+
 WITH fechas AS (
 
     SELECT
-        DATEADD(day, seq4(), '1900-01-01') AS fecha
-    FROM TABLE(GENERATOR(ROWCOUNT => 60000))
+        DATEADD(day, seq4(), '2020-01-01') AS fecha
+    FROM TABLE(GENERATOR(ROWCOUNT => 2557))
 
 ),
 
@@ -22,6 +28,7 @@ final AS (
           END AS tipo_dia
 
     FROM fechas
+    WHERE fecha <= '2026-12-31'
 
 )
 
