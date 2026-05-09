@@ -10,14 +10,14 @@ WITH alquileres AS (
 
     SELECT *
     FROM {{ ref('int_alquiler') }}
+    WHERE fecha_inicio IS NOT NULL
+      AND TO_DATE(fecha_inicio) BETWEEN '2020-01-01' AND '2026-12-31'
 
 ),
 
 usuarios AS (
 
-    SELECT
-          sk_usuario
-        , id_usuario
+    SELECT sk_usuario, id_usuario
     FROM {{ ref('dim_usuario') }}
     WHERE is_current = TRUE
 
@@ -25,9 +25,7 @@ usuarios AS (
 
 productos AS (
 
-    SELECT
-          sk_producto
-        , id_producto
+    SELECT sk_producto, id_producto
     FROM {{ ref('dim_producto') }}
     WHERE is_current = TRUE
 
@@ -39,8 +37,8 @@ final AS (
           a.id_alquiler
         , u.sk_usuario
         , p.sk_producto
-        , a.fecha_inicio AS id_fecha_inicio
-        , a.fecha_fin AS id_fecha_fin
+        , TO_DATE(a.fecha_inicio) AS id_fecha_inicio
+        , TO_DATE(a.fecha_fin) AS id_fecha_fin
         , a.duracion_dias
         , a.estado_alquiler
         , a.canal_reserva
@@ -55,13 +53,11 @@ final AS (
     INNER JOIN productos p
         ON a.id_producto = p.id_producto
 
-    WHERE a.fecha_inicio BETWEEN '2020-01-01' AND '2026-12-31'
-
     {% if is_incremental() %}
-      AND a.id_alquiler NOT IN (
-          SELECT id_alquiler
-          FROM {{ this }}
-      )
+    WHERE a.id_alquiler NOT IN (
+        SELECT id_alquiler
+        FROM {{ this }}
+    )
     {% endif %}
 
 )

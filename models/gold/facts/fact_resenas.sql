@@ -10,6 +10,8 @@ WITH resenas AS (
 
     SELECT *
     FROM {{ ref('int_resena_sentimiento') }}
+    WHERE fecha_resena IS NOT NULL
+      AND TO_DATE(fecha_resena) BETWEEN '2020-01-01' AND '2026-12-31'
 
 ),
 
@@ -31,7 +33,7 @@ final AS (
         , a.sk_usuario
         , a.sk_producto
         , r.id_producto
-        , r.fecha_resena AS id_fecha_resena
+        , TO_DATE(r.fecha_resena) AS id_fecha_resena
         , r.rating
         , r.sentimiento
         , 1 AS num_resenas
@@ -41,13 +43,11 @@ final AS (
     INNER JOIN alquileres a
         ON r.id_alquiler = a.id_alquiler
 
-    WHERE r.fecha_resena BETWEEN '2020-01-01' AND '2026-12-31'
-
     {% if is_incremental() %}
-      AND r.id_resena NOT IN (
-          SELECT id_resena
-          FROM {{ this }}
-      )
+    WHERE r.id_resena NOT IN (
+        SELECT id_resena
+        FROM {{ this }}
+    )
     {% endif %}
 
 )
